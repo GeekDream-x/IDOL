@@ -7,7 +7,7 @@ This is the repo for our paper "IDOL: Indicator-oriented Logic Pre-training for 
 Resources like codes, datasets and models will be provided here recently.
 
 
-## Pre-training Data
+## Pre-training Data (LGP)
 
 ### Step 1
 Download wikipedia data at [WikiDumps](https://dumps.wikimedia.org/backup-index.html).
