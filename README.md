@@ -1,10 +1,24 @@
 # IDOL
+
+### ***Under Construction***
+
 This is the repo for our paper "IDOL: Indicator-oriented Logic Pre-training for Logical Reasoning" accepted to the Findings of ACL 2023. Available at ACL anthology at [LINK](https://aclanthology.org/2023.findings-acl.513/#).
 
 Resources like codes, datasets and models will be provided here recently.
 
 
-Citation:
+## Pre-training Data
+
+### Step 1
+Download wikipedia data at [WikiDumps](https://dumps.wikimedia.org/backup-index.html).
+
+### Step 2
+Extract logic-related texts and give them LCP labels after tokenization with the help of the functions in ~~utils.py~~. Here, we take RoBERTa for example, the IDOL pre-training dataset for RoBERTa is available at [GoogleDrive](https://drive.google.com/file/d/1D_LOSJ1bC4UF1G5gCLe6_NmJaoe1oyjf/view?usp=sharing).
+
+
+
+
+## Citation
 ```
 @inproceedings{xu-etal-2023-idol,
     title = "{IDOL}: Indicator-oriented Logic Pre-training for Logical Reasoning",
