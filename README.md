@@ -14,7 +14,7 @@ Resources like codes, datasets and models will be provided here recently.
 ## Pre-training Data (LGP)
 
 ### Step 1
-Download wikipedia data at [WikiDumps](https://dumps.wikimedia.org/backup-index.html).
+Download wikipedia data at [WikiDumps](https://dumps.wikimedia.org/backup-index.html). Then, extract texts with the help of [WikiExtractor](https://github.com/attardi/wikiextractor).
 
 ### Step 2
 Extract logic-related texts and give them LCP labels after tokenization with the help of the functions in ~~utils.py~~. Here, we take RoBERTa for example, the IDOL pre-training dataset for RoBERTa is available at [GoogleDrive](https://drive.google.com/file/d/1D_LOSJ1bC4UF1G5gCLe6_NmJaoe1oyjf/view?usp=sharing).
