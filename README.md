@@ -20,8 +20,13 @@ Download wikipedia data at [WikiDumps](https://dumps.wikimedia.org/backup-index.
 Extract logic-related texts and give them LCP labels after tokenization with the help of the functions in ~~utils.py~~. Here, we take RoBERTa for example, the IDOL pre-training dataset for RoBERTa is available at [GoogleDrive](https://drive.google.com/file/d/1D_LOSJ1bC4UF1G5gCLe6_NmJaoe1oyjf/view?usp=sharing).
 
 ## IDOL Pre-training
+During pre-training with IDOL, models learns via MLM and LCP as follows:
+<div align="center">
+<img src=./imgs/IDOL-pretraining.png width=40% />
+</div>
 
-###
+## Downstream Fine-tuning
+Our implementation is based on the official framework provided by the ReClor team and we made some customization.
 
 
 ## Citation
