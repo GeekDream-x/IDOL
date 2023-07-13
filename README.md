@@ -26,8 +26,15 @@ During pre-training with IDOL, models learns via MLM and LCP as follows:
 </div>
 
 ## Downstream Fine-tuning
-Our implementation is based on the official framework provided by the ReClor team and we made some customization.
+Our implementation is based on the official framework provided by the ReClor team and we made some customization. ReClor, LogiQA, RACE are supported in our example in `/scripts/finetune`.
 
+```shell
+1. cd /scripts
+2. Put the downstream task datasets in ./data
+3. Change the parameters to your prefered ones # especially task_name
+4. sh run_ft.sh
+
+```
 
 ## Citation
 ```
