@@ -2,7 +2,7 @@
 
 ### * ***Under Construction*** *
 
-This is the repo for our paper "IDOL: Indicator-oriented Logic Pre-training for Logical Reasoning" accepted to the Findings of ACL 2023. Available at ACL anthology at [LINK](https://aclanthology.org/2023.findings-acl.513/#).
+This is the repo for our paper "IDOL: Indicator-oriented Logic Pre-training for Logical Reasoning" accepted to the Findings of ACL 2023. Available at [ACL Anthology](https://aclanthology.org/2023.findings-acl.513/#).
 
 Resources like codes, datasets and models will be provided here recently.
 
@@ -31,7 +31,7 @@ Our implementation is based on the official framework provided by the ReClor tea
 ```shell
 1. cd /scripts
 2. Put the downstream task datasets in ./data
-3. Change the parameters to your prefered ones # especially task_name
+3. Change the values of parameters to your prefered ones # especially the task_name
 4. sh run_ft.sh
 
 ```
