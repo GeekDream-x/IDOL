@@ -8,7 +8,7 @@ Resources like codes, datasets and models will be provided here recently.
 
 <!-- ![system-flowchat](/imgs/system-flowchart.png){:height="50%" width="50%"} -->
 <div align="center">
-<img src=./imgs/system-flowchart.png width=60% />
+<img src=./imgs/system-flowchart.png width=100% />
 </div>
 
 ## Pre-training Data (LGP)
