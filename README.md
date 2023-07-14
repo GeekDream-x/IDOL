@@ -4,7 +4,6 @@
 
 This is the repo for our paper "IDOL: Indicator-oriented Logic Pre-training for Logical Reasoning" accepted to the Findings of ACL 2023. Available at [ACL Anthology](https://aclanthology.org/2023.findings-acl.513/#).
 
-Resources like codes, datasets and models will be provided here recently.
 
 <!-- ![system-flowchat](/imgs/system-flowchart.png){:height="50%" width="50%"} -->
 <div align="center">
