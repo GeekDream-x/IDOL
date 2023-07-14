@@ -11,7 +11,7 @@ Resources like codes, datasets and models will be provided here recently.
 <img src=./imgs/system-flowchart.png width=100% />
 </div>
 
-## Pre-training Data (LGP)
+## Pre-training Dataset (LGP)
 
 ### Step 1
 Download wikipedia data at [WikiDumps](https://dumps.wikimedia.org/backup-index.html). Then, extract texts with the help of [WikiExtractor](https://github.com/attardi/wikiextractor).
@@ -20,12 +20,14 @@ Download wikipedia data at [WikiDumps](https://dumps.wikimedia.org/backup-index.
 Extract logic-related texts and give them LCP labels after tokenization with the help of the functions in ~~utils.py~~. Here, we take RoBERTa for example, the IDOL pre-training dataset for RoBERTa is available at [GoogleDrive](https://drive.google.com/file/d/1D_LOSJ1bC4UF1G5gCLe6_NmJaoe1oyjf/view?usp=sharing).
 
 ## IDOL Pre-training
-During pre-training with IDOL, models learns via MLM and LCP simultaneously as follows:
+- During pre-training with IDOL, models learns via MLM and LCP simultaneously as follows:
 <div align="center">
 <img src=./imgs/IDOL-pretraining.png width=40% />
 </div>
 
-Examples of checkpoints further pre-trained with IDOL are available at:
+- About the training environment dependencies, please refer to `./idol_environment.yml`. As for the library `transformers`, please use the one provided in this repo `./transformers`.
+
+- Examples of checkpoints further pre-trained with IDOL are available at:
 
 |**Model**|Link|Model|Link|
 |:-------:|:-------:|:-------:|:-------:|
