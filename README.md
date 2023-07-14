@@ -20,10 +20,17 @@ Download wikipedia data at [WikiDumps](https://dumps.wikimedia.org/backup-index.
 Extract logic-related texts and give them LCP labels after tokenization with the help of the functions in ~~utils.py~~. Here, we take RoBERTa for example, the IDOL pre-training dataset for RoBERTa is available at [GoogleDrive](https://drive.google.com/file/d/1D_LOSJ1bC4UF1G5gCLe6_NmJaoe1oyjf/view?usp=sharing).
 
 ## IDOL Pre-training
-During pre-training with IDOL, models learns via MLM and LCP as follows:
+During pre-training with IDOL, models learns via MLM and LCP simultaneously as follows:
 <div align="center">
 <img src=./imgs/IDOL-pretraining.png width=40% />
 </div>
+
+Examples of checkpoints further pre-trained with IDOL are available at:
+
+|**Model**|Link|Model|Link|
+|:-------:|:-------:|:-------:|:-------:|
+| **BERT** | [Google Drive](https://drive.google.com/drive/folders/1btwpE6_3z1qefoqSpxZNslPXSuQMQNmH?usp=drive_link) | **RoBERTa** | [Google Drive](https://drive.google.com/drive/folders/1qqAnHY4U-z5_VdxfARLsQd_ClvvYE-iB?usp=drive_link) |
+| **ALBERT** | [Google Drive](https://drive.google.com/drive/folders/1zWwzuPqtjnE01Lo0K1m9-rtHtMHlQNCO?usp=drive_link) | **DeBERTa** | [Google Drive](https://drive.google.com/drive/folders/1jMxL569gCENpLdLWtygxcrenDC3yjGbi?usp=drive_link) |
 
 ## Downstream Fine-tuning
 Our implementation is based on the official framework provided by the ReClor team and we made some customization. ReClor, LogiQA, RACE are supported in our example in `/scripts/finetune`.

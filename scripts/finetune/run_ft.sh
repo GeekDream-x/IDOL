@@ -6,7 +6,7 @@ OUTPUT_DIR=${PROJECT_ROOT_DIR}/outputs
 
 max_len=256
 epoch=3.0
-seed=31430
+seed=17263 # 23035 31430
 model_type=roberta
 task_name=reclor # logiqa race
 warmup_proportion=0.1   # 0.06 0.1
