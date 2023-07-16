@@ -21,7 +21,7 @@ dataloader_num_workers=2
 
 
 python -m torch.distributed.launch --nnodes \$WORLD_SIZE --node_rank \$RANK --master_addr \$MASTER_ADDR --master_port \$MASTER_PORT --nproc_per_node ${ngpu} \
-    ../run.py \
+    run.py \
     --config_name ${model_name_or_path} \
     --tokenizer_name ${model_name_or_path} \
     --model_name_or_path ${model_name_or_path} \

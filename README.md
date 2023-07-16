@@ -24,22 +24,30 @@ Extract logic-related texts and give them LCP labels after tokenization with the
 <img src=./imgs/IDOL-pretraining.png width=40% />
 </div>
 
-- About the training environment dependencies, please refer to `./idol_environment.yml`. As for the library `transformers`, please use the one provided in this repo `./transformers`.
+- About the training environment dependencies, please refer to `./idol_environment.yml`. As for the library `transformers`, please use the one provided in `./transformers`.
+- Steps
+  ```shell
+  1. cd /scripts/pretrain
+  2. Put LGP in ./data
+  3. Change the values of parameters to your prefered ones in logic_pretrain.sh
+  4. sh logic_pretrain.sh
+
+  ```
 
 - Examples of checkpoints further pre-trained with IDOL are available at:
 
-|**Model**|Link|Model|Link|
-|:-------:|:-------:|:-------:|:-------:|
-| **BERT** | [Google Drive](https://drive.google.com/drive/folders/1btwpE6_3z1qefoqSpxZNslPXSuQMQNmH?usp=drive_link) | **RoBERTa** | [Google Drive](https://drive.google.com/drive/folders/1qqAnHY4U-z5_VdxfARLsQd_ClvvYE-iB?usp=drive_link) |
-| **ALBERT** | [Google Drive](https://drive.google.com/drive/folders/1zWwzuPqtjnE01Lo0K1m9-rtHtMHlQNCO?usp=drive_link) | **DeBERTa** | [Google Drive](https://drive.google.com/drive/folders/1jMxL569gCENpLdLWtygxcrenDC3yjGbi?usp=drive_link) |
+  |**Model**|Link|Model|Link|
+  |:-------:|:-------:|:-------:|:-------:|
+  | **BERT** | [Google Drive](https://drive.google.com/drive/folders/1btwpE6_3z1qefoqSpxZNslPXSuQMQNmH?usp=drive_link) | **RoBERTa** | [Google Drive](https://drive.google.com/drive/folders/1qqAnHY4U-z5_VdxfARLsQd_ClvvYE-iB?usp=drive_link) |
+  | **ALBERT** | [Google Drive](https://drive.google.com/drive/folders/1zWwzuPqtjnE01Lo0K1m9-rtHtMHlQNCO?usp=drive_link) | **DeBERTa** | [Google Drive](https://drive.google.com/drive/folders/1jMxL569gCENpLdLWtygxcrenDC3yjGbi?usp=drive_link) |
 
 ## Downstream Fine-tuning
 Our implementation is based on the official framework provided by the ReClor team and we made some customization. ReClor, LogiQA, RACE are supported in our example in `/scripts/finetune`.
 
 ```shell
-1. cd /scripts
+1. cd /scripts/finetune
 2. Put the downstream task datasets in ./data
-3. Change the values of parameters to your prefered ones # especially the task_name
+3. Change the values of parameters to your prefered ones # especially task_name
 4. sh run_ft.sh
 
 ```
