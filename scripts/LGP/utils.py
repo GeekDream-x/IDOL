@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from glob import glob
 import sys
+import json
 from nltk import word_tokenize, pos_tag
 from nltk.corpus import wordnet
 from nltk.stem import WordNetLemmatizer
@@ -297,3 +298,37 @@ def count_indicator_num(sent, indicator_type):
 
 
 # --- 1
+
+def extract_pages(ipt_dir, opt_dir, tokenizer):
+
+    lens, final_pages = []
+    save_idx = 0
+
+    for folder in tqdm(glob(f"{ipt_dir}/*")):
+        
+        for file in glob(f"{folder}/*"):
+            with open(file, 'r') as f:
+                for line in f.readlines():
+                    data = json.loads(line)
+                    text_candidate = data["text"].strip()
+                    if len(text_candidate.split()) >= 20:
+
+                        final_pages.append(json.dumps({"page":text_candidate}))
+                        lens.extend([len(tokenizer.tokenize(paragraph)) for paragraph in text_candidate.split('\n')])
+
+                        if len(final_pages) == 20000:
+                            with open(f"{opt_dir}/wiki-extracted-pages-{save_idx}.jsonl", 'w') as opt_f:
+                                opt_f.write('\n'.join(final_pages))
+  
+                            save_idx += 1
+                            final_pages = []
+    
+    if len(final_pages) != 0:
+        with open(f"{opt_dir}/wiki-extracted-pages-{save_idx}.jsonl", 'w') as opt_f:
+            opt_f.write('\n'.join(final_pages))
+  
+
+# --- 2
+        
+
+
