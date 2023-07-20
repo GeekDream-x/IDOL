@@ -220,7 +220,6 @@ def lemmatize(sentence):
 
     return ' '.join(lemmas_sent)
 
-# ----- 0 
 
 
 def take_first_idx(x):
@@ -297,7 +296,6 @@ def count_indicator_num(sent, indicator_type):
     return count
 
 
-# --- 1
 
 def extract_pages(ipt_dir, opt_dir, tokenizer):
 
@@ -328,7 +326,66 @@ def extract_pages(ipt_dir, opt_dir, tokenizer):
             opt_f.write('\n'.join(final_pages))
   
 
-# --- 2
-        
 
 
+def extract_para_from_page(ipt_dir, opt_dir):
+
+    save_idx, paragraphs = 0, []
+    paragraph_num, paragraph_with_logic_num = 0, 0
+
+    for file_path in tqdm(glob(f"{ipt_dir}/wiki-extracted-pages-*.jsonl")):
+        with open(file_path, 'r') as f:
+            for line in f.readlines():
+                page = json.loads(line)['page']
+                paragraphs_in_page = page.strip().split("\n")
+                paragraphs_in_page = [x for x in paragraphs_in_page if len(x.split()) > 5]
+                paragraphs.extend(paragraphs_in_page)
+
+                for para in paragraphs_in_page:
+                    if check_contain_indicator(para):
+                        paragraph_with_logic_num += 1
+                    paragraph_num += 1
+
+                if len(paragraphs) > 1000000:
+                    
+                    with open(f"{opt_dir}/wiki-extracted-paragraphs-{save_idx}.txt", 'w') as opt_f:
+                        opt_f.write('\n'.join(paragraphs[:10000000]))
+
+                    save_idx += 1
+                    paragraphs = paragraphs[10000000:]
+
+    with open(f"{opt_dir}/wiki-extracted-paragraphs-{save_idx}.txt", 'w') as opt_f:
+        opt_f.write('\n'.join(paragraphs[:10000000]))
+
+def extract_para_with_logic(ipt_dir, opt_dir):
+
+    save_idx, logic_paragraphs, logic_paragraphs_lens, logic_indicator_appear_num = 0, [], [], [0 for _ in range(500)]
+    logic_para_num = 0
+
+    for file_path in tqdm(glob(f"{ipt_dir}/wiki-extracted-paragraphs-*.txt")):
+        with open(file_path, 'r') as f:
+            for line in f.readlines():
+
+                paragraph = line.strip()
+
+                if check_contain_indicator(paragraph):
+
+                    logic_para_num += 1    
+                    logic_paragraphs.append(paragraph)
+                    logic_paragraphs_lens.append(len(tokenizer.tokenize(paragraph)))
+                    logic_indicator_appear_num[calculate_logic_indicators_num(paragraph)] += 1
+
+                    if len(logic_paragraphs) > 1000000:
+                        
+                        with open(f"{opt_dir}/wiki-extracted-logical-paragraphs-{save_idx}.txt", 'w') as opt_f:
+                            opt_f.write('\n'.join(logic_paragraphs[:1000000]))
+
+                        save_idx += 1
+                        logic_paragraphs = logic_paragraphs[1000000:]
+
+    if len(logic_paragraphs) != 0:
+        with open(f"{opt_dir}/wiki-extracted-logical-paragraphs-{save_idx}.txt", 'w') as opt_f:
+            opt_f.write('\n'.join(logic_paragraphs[:1000000]))
+
+
+# --- no 3.5
