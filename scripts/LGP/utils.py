@@ -5,6 +5,7 @@ from tqdm import tqdm
 from glob import glob
 import sys
 import json
+import random
 from nltk import word_tokenize, pos_tag
 from nltk.corpus import wordnet
 from nltk.stem import WordNetLemmatizer
@@ -315,14 +316,14 @@ def extract_pages(ipt_dir, opt_dir, tokenizer):
                         lens.extend([len(tokenizer.tokenize(paragraph)) for paragraph in text_candidate.split('\n')])
 
                         if len(final_pages) == 20000:
-                            with open(f"{opt_dir}/wiki-extracted-pages-{save_idx}.jsonl", 'w') as opt_f:
+                            with open(f"{opt_dir}/wiki-pages-{save_idx}.jsonl", 'w') as opt_f:
                                 opt_f.write('\n'.join(final_pages))
   
                             save_idx += 1
                             final_pages = []
     
     if len(final_pages) != 0:
-        with open(f"{opt_dir}/wiki-extracted-pages-{save_idx}.jsonl", 'w') as opt_f:
+        with open(f"{opt_dir}/wiki-pages-{save_idx}.jsonl", 'w') as opt_f:
             opt_f.write('\n'.join(final_pages))
   
 
@@ -333,7 +334,7 @@ def extract_para_from_page(ipt_dir, opt_dir):
     save_idx, paragraphs = 0, []
     paragraph_num, paragraph_with_logic_num = 0, 0
 
-    for file_path in tqdm(glob(f"{ipt_dir}/wiki-extracted-pages-*.jsonl")):
+    for file_path in tqdm(glob(f"{ipt_dir}/wiki-pages-*.jsonl")):
         with open(file_path, 'r') as f:
             for line in f.readlines():
                 page = json.loads(line)['page']
@@ -348,13 +349,13 @@ def extract_para_from_page(ipt_dir, opt_dir):
 
                 if len(paragraphs) > 1000000:
                     
-                    with open(f"{opt_dir}/wiki-extracted-paragraphs-{save_idx}.txt", 'w') as opt_f:
+                    with open(f"{opt_dir}/wiki-paragraphs-{save_idx}.txt", 'w') as opt_f:
                         opt_f.write('\n'.join(paragraphs[:10000000]))
 
                     save_idx += 1
                     paragraphs = paragraphs[10000000:]
 
-    with open(f"{opt_dir}/wiki-extracted-paragraphs-{save_idx}.txt", 'w') as opt_f:
+    with open(f"{opt_dir}/wiki-paragraphs-{save_idx}.txt", 'w') as opt_f:
         opt_f.write('\n'.join(paragraphs[:10000000]))
 
 def extract_para_with_logic(ipt_dir, opt_dir):
@@ -362,7 +363,7 @@ def extract_para_with_logic(ipt_dir, opt_dir):
     save_idx, logic_paragraphs, logic_paragraphs_lens, logic_indicator_appear_num = 0, [], [], [0 for _ in range(500)]
     logic_para_num = 0
 
-    for file_path in tqdm(glob(f"{ipt_dir}/wiki-extracted-paragraphs-*.txt")):
+    for file_path in tqdm(glob(f"{ipt_dir}/wiki-paragraphs-*.txt")):
         with open(file_path, 'r') as f:
             for line in f.readlines():
 
@@ -377,15 +378,177 @@ def extract_para_with_logic(ipt_dir, opt_dir):
 
                     if len(logic_paragraphs) > 1000000:
                         
-                        with open(f"{opt_dir}/wiki-extracted-logical-paragraphs-{save_idx}.txt", 'w') as opt_f:
+                        with open(f"{opt_dir}/wiki-logical-paragraphs-{save_idx}.txt", 'w') as opt_f:
                             opt_f.write('\n'.join(logic_paragraphs[:1000000]))
 
                         save_idx += 1
                         logic_paragraphs = logic_paragraphs[1000000:]
 
     if len(logic_paragraphs) != 0:
-        with open(f"{opt_dir}/wiki-extracted-logical-paragraphs-{save_idx}.txt", 'w') as opt_f:
+        with open(f"{opt_dir}/wiki-ogical-paragraphs-{save_idx}.txt", 'w') as opt_f:
             opt_f.write('\n'.join(logic_paragraphs[:1000000]))
 
 
-# --- no 3.5
+# --- no 3.5 -- now 4
+
+LOGIC_MASKED_RATIO = 0.7
+NOT_LOGIC_INDICATOR_MASKED_RATIO = 0.0055 * 0.6
+lcp_label_mapping = {"premise":0, "conclusion":1, "neg":2, "turn":3, "and":4, "no":5}
+
+
+def mask_tagged_paragraphs(ipt_dir, opt_dir):
+
+
+    label_base = list(lcp_label_mapping.values())
+    lcp_label_num = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0}
+
+
+    indicators_tokens = {"premise":[], "conclusion":[], "neg":[], "turn":[], "and":[]}
+    for key in indicators_tokens.keys():
+        for indicator in locals()[f"{key}_indicators"]:
+            indicators_tokens[key].append(remove_fromList(tokenizer.tokenize(indicator)))
+
+    samples = []
+    abandoned_sample_num = 0
+    valid_logic_sample_num = 0
+
+    is_abandon = False
+
+    for file_path in glob(f"{ipt_dir}/*.jsonl"):
+        save_idx = file_path.split('-')[-1].split('.')[0]
+
+        with open(file_path, 'r') as ipt_f:
+            
+            sample_idx = 0
+
+            for line in tqdm(ipt_f.readlines()):
+                sample_idx += 1
+
+                sample = json.loads(line)
+
+                paragraph = sample['text']
+                paragraph_tokens = tokenizer.tokenize(paragraph)
+
+                paragraph_tokens_noG = [x.replace("Ġ", "").lower() if x != 'Ġ' else x for x in paragraph_tokens]
+
+                logic_polarity_label = [-100 for _ in range(len(paragraph_tokens))]
+
+                indicator_locations = {"premise":[], "conclusion":[], "neg":[], "turn":[], "and":[]}
+
+                for indicator_type in indicator_types:
+                    cur_indicators = locals()[f"{indicator_type}_indicators"]
+                    indicator_locations[indicator_type] = locate_indicators_in_sentence(paragraph, paragraph_tokens_noG, cur_indicators, indicators_tokens[indicator_type])
+                
+                all_indicator_locations = []
+                for indicator_type, locations in indicator_locations.items():
+                    for location in locations:
+                        if location:
+                            all_indicator_locations.append((location, lcp_label_mapping[indicator_type]))
+                
+                all_indicator_locations.sort(key=take_first_idx)
+                
+                # 保留span最大
+                all_indicator_locations = keep_max_span_for_each_start_idx(all_indicator_locations) if all_indicator_locations else all_indicator_locations
+
+                # 添加无indicator mask locations  label=5
+                no_logic_mask_idx_candidates = list(range(len(paragraph_tokens_noG)))
+                for indicator_location in all_indicator_locations:
+                    start_idx, end_idx = indicator_location[0]
+                    for i in range(max(0, start_idx-5), min(len(paragraph_tokens_noG) ,end_idx+1+5)):  # 扩大no logic indicator mask禁止mask的范围
+                        if i in no_logic_mask_idx_candidates: 
+                            no_logic_mask_idx_candidates.remove(i)
+                for no_logic_mask_idx_candidate in no_logic_mask_idx_candidates:
+                    if random.random() < NOT_LOGIC_INDICATOR_MASKED_RATIO:
+                        all_indicator_locations.append(((no_logic_mask_idx_candidate, no_logic_mask_idx_candidate), lcp_label_mapping["no"]))
+
+                # 开始mask, 修改logic_polarity_label
+                while all_indicator_locations:
+                    cur_location = all_indicator_locations.pop()
+                    cur_start_idx, cur_end_idx = cur_location[0]
+                    cur_polarity_label = cur_location[1]
+
+                    if cur_polarity_label == lcp_label_mapping["no"]:
+                        paragraph_tokens[cur_start_idx] = '[LGMASK]'
+                        logic_polarity_label[cur_start_idx] = cur_polarity_label
+                        lcp_label_num[cur_polarity_label] += 1
+                    else:
+                        random_num = random.random()
+
+                        if cur_polarity_label == lcp_label_mapping["and"]:
+                            if random_num < (LOGIC_MASKED_RATIO * 0.5):
+                                paragraph_tokens[cur_start_idx: cur_end_idx+1] = ['[LGMASK]']
+                                logic_polarity_label[cur_start_idx: cur_end_idx+1] = [cur_polarity_label]
+                                lcp_label_num[cur_polarity_label] += 1
+                        else:
+                            if random_num < LOGIC_MASKED_RATIO:
+                                paragraph_tokens[cur_start_idx: cur_end_idx+1] = ['[LGMASK]']
+                                logic_polarity_label[cur_start_idx: cur_end_idx+1] = [cur_polarity_label]
+                                lcp_label_num[cur_polarity_label] += 1
+
+
+                paragraph = tokenizer.convert_tokens_to_string(paragraph_tokens).replace("[LGMASK]", " [LGMASK]")
+
+                para_tokens_before_save = tokenizer.tokenize(paragraph)
+
+                if len(para_tokens_before_save) > len(logic_polarity_label):
+                        logic_polarity_label += [-100 for _ in range(len(para_tokens_before_save) - len(logic_polarity_label))]
+                else:
+                    logic_polarity_label = logic_polarity_label[:len(para_tokens_before_save)]
+                
+                if "[LGMASK]" in paragraph:
+
+                    lgmask_indices = []
+                    for i in range(len(para_tokens_before_save)):
+                        if para_tokens_before_save[i] == "[LGMASK]" : lgmask_indices.append(i)
+                    for idx in lgmask_indices:
+                        offset = 1
+                        if logic_polarity_label[idx] not in label_base:
+                            
+                            target_idx = None
+                            for i in range(1,5):
+                                if idx-i > -1 and logic_polarity_label[idx-i] in label_base:
+                                    target_idx = idx-i
+                                    break
+                                if idx+i < len(logic_polarity_label)-1 and logic_polarity_label[idx+i] in label_base:
+                                    target_idx = idx+i
+                                    break
+                            if target_idx:    
+                                logic_polarity_label[idx], logic_polarity_label[target_idx] = logic_polarity_label[target_idx], logic_polarity_label[idx]
+                            else:
+                                is_abandon = True
+                                break
+                    if is_abandon:
+                        is_abandon = False
+                        abandoned_sample_num += 1
+                        print(f"1 abandoned_sample_num:{abandoned_sample_num}")
+                        continue
+
+
+                    # [LGMASK]验证
+                    lgmask_indices = []
+                    for i in range(len(para_tokens_before_save)):
+                        if para_tokens_before_save[i] == "[LGMASK]" : lgmask_indices.append(i)
+                    for idx in lgmask_indices:
+                        if logic_polarity_label[idx] not in label_base:
+                            is_abandon = True
+                    if is_abandon:
+                        is_abandon = False
+                        abandoned_sample_num += 1
+                        print(f"3 abandoned_sample_num:{abandoned_sample_num}")
+                        continue
+
+                    if len(tokenizer.tokenize(paragraph)) != len(logic_polarity_label):
+                        is_abandon = True
+                    if is_abandon:
+                        is_abandon = False
+                        abandoned_sample_num += 1
+                        print(f"4 abandoned_sample_num:{abandoned_sample_num}")
+                        continue
+                    valid_logic_sample_num += 1
+
+                samples.append(json.dumps({"text": paragraph, "logic_polarity_label": logic_polarity_label}))
+
+            with open(f"{opt_dir}/lcp-rbt-{save_idx}.jsonl", 'w') as opt_f:
+                opt_f.write("\n".join(samples))
+                samples = []
+
