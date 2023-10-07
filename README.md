@@ -1,8 +1,12 @@
 # IDOL
 
 
-This is the repo for our paper `"IDOL: Indicator-oriented Logic Pre-training for Logical Reasoning"` accepted to the Findings of ACL 2023. [[Link]](https://aclanthology.org/2023.findings-acl.513/#)
+- 📚 Repo for our paper `"IDOL: Indicator-oriented Logic Pre-training for Logical Reasoning"` accepted to the Findings of ACL 2023. [[Link]](https://aclanthology.org/2023.findings-acl.513/#)
+- 🏆 Ranked $1^{st}$  system on ReClor Leaderboard from 2023.1 to 2023.10
 
+<div align="center">
+<img src=./imgs/ReClorChampionSanpshot.png width=100% />
+</div>
 
 <!-- ![system-flowchat](/imgs/system-flowchart.png){:height="50%" width="50%"} -->
 <div align="center">
