@@ -718,6 +718,7 @@ if is_torch_available():
         [
             "DEBERTA_V2_PRETRAINED_MODEL_ARCHIVE_LIST",
             "DebertaV2ForMaskedLM",
+            "DebertaV2ForMultipleChoice",
             "DebertaV2ForQuestionAnswering",
             "DebertaV2ForSequenceClassification",
             "DebertaV2ForTokenClassification",
@@ -2397,6 +2398,7 @@ if TYPE_CHECKING:
         from .models.deberta_v2 import (
             DEBERTA_V2_PRETRAINED_MODEL_ARCHIVE_LIST,
             DebertaV2ForMaskedLM,
+            DebertaV2ForMultipleChoice,
             DebertaV2ForQuestionAnswering,
             DebertaV2ForSequenceClassification,
             DebertaV2ForTokenClassification,
