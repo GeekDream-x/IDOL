@@ -1,3 +1,5 @@
+
+
 # IDOL
 
 
@@ -30,7 +32,7 @@ Extract logic-related texts and give them LCP labels after tokenization with the
 - About the training environment dependencies, please refer to `./idol_environment.yml`. As for the library `transformers`, please use the one provided in `./transformers`.
 - Steps
   ```shell
-  1. cd /scripts/pretrain
+  1. cd scripts/pretrain
   2. Put LGP in ./data
   3. Change the values of parameters to your prefered ones in logic_pretrain.sh
   4. sh logic_pretrain.sh
@@ -75,4 +77,3 @@ Our implementation is based on the official framework provided by the ReClor tea
 
 
 ```
-
